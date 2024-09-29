@@ -8,14 +8,14 @@ import Foundation
 import AuthenticationServices
 
 public struct SignInWithAppleResult: Sendable {
-    let token: String
-    let nonce: String
-    let email: String?
-    let firstName: String?
-    let lastName: String?
-    let nickName: String?
+    public let token: String
+    public let nonce: String
+    public let email: String?
+    public let firstName: String?
+    public let lastName: String?
+    public let nickName: String?
 
-    var fullName: String? {
+    public var fullName: String? {
         if let firstName, let lastName {
             return firstName + " " + lastName
         } else if let firstName {
@@ -26,7 +26,7 @@ public struct SignInWithAppleResult: Sendable {
         return nil
     }
 
-    var displayName: String? {
+    public var displayName: String? {
         fullName ?? nickName
     }
 
