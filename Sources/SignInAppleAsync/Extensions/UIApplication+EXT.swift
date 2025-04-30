@@ -4,6 +4,9 @@
 //
 //  Created by Nick Sarno on 9/29/24.
 //
+
+#if os(iOS)
+
 import UIKit
 
 extension UIApplication {
@@ -48,3 +51,5 @@ extension UIApplication {
     }
 
 }
+
+#endif

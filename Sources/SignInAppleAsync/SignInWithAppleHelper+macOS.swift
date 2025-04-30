@@ -1,7 +1,16 @@
+//
+//  SignInWithAppleHelper+macOS.swift
+//  SignInAppleAsync
+//
+//  Created by Valentine Zubkov on 30.04.2025.
+//
+
+#if os(macOS)
+
 import Foundation
 import CryptoKit
 import AuthenticationServices
-import UIKit
+import AppKit
 
 @MainActor
 public final class SignInWithAppleHelper: NSObject {
@@ -12,7 +21,7 @@ public final class SignInWithAppleHelper: NSObject {
     /// Start Sign In With Apple and present OS modal.
     ///
     /// - Parameter viewController: ViewController to present OS modal on. If nil, function will attempt to find the top-most ViewController. Throws an error if no ViewController is found.
-    public func signIn(viewController: UIViewController? = nil) async throws -> SignInWithAppleResult {
+    public func signIn(viewController: NSViewController? = nil) async throws -> SignInWithAppleResult {
         for try await response in startSignInWithAppleFlow() {
             return response
         }
@@ -20,7 +29,7 @@ public final class SignInWithAppleHelper: NSObject {
         throw SignInWithAppleError.failedToStartFlow
     }
 
-    private func startSignInWithAppleFlow(viewController: UIViewController? = nil) -> AsyncThrowingStream<SignInWithAppleResult, Error> {
+    private func startSignInWithAppleFlow(viewController: NSViewController? = nil) -> AsyncThrowingStream<SignInWithAppleResult, Error> {
         AsyncThrowingStream { continuation in
             startSignInWithAppleFlow { result in
                 switch result {
@@ -36,8 +45,8 @@ public final class SignInWithAppleHelper: NSObject {
         }
     }
 
-    private func startSignInWithAppleFlow(viewController: UIViewController? = nil, completion: @escaping (Result<SignInWithAppleResult, Error>) -> Void) {
-        guard let topVC = viewController ?? UIApplication.topViewController() else {
+    private func startSignInWithAppleFlow(viewController: NSViewController? = nil, completion: @escaping (Result<SignInWithAppleResult, Error>) -> Void) {
+        guard let topVC = viewController ?? NSApplication.topViewController() else {
             completion(.failure(SignInWithAppleError.noViewController))
             return
         }
@@ -98,7 +107,7 @@ private extension SignInWithAppleHelper {
         return hashString
     }
 
-    private func showOSPrompt(nonce: String, on viewController: UIViewController) {
+    private func showOSPrompt(nonce: String, on viewController: NSViewController) {
         let appleIDProvider = ASAuthorizationAppleIDProvider()
         let request = appleIDProvider.createRequest()
         request.requestedScopes = [.fullName, .email]
@@ -163,8 +172,11 @@ extension SignInWithAppleHelper: ASAuthorizationControllerDelegate {
     }
 }
 
-extension UIViewController: @retroactive ASAuthorizationControllerPresentationContextProviding {
+extension NSViewController: @retroactive ASAuthorizationControllerPresentationContextProviding {
     public func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
         return self.view.window!
     }
  }
+
+
+#endif
