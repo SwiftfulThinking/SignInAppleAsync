@@ -117,7 +117,9 @@ private extension SignInWithAppleHelper {
         authorizationController.delegate = self
         authorizationController.presentationContextProvider = viewController
 
-        authorizationController.performRequests()
+        Task { @MainActor in
+            authorizationController.performRequests()
+        }
     }
 
     private enum SignInWithAppleError: LocalizedError {
