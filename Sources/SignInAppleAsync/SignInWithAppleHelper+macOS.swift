@@ -117,7 +117,7 @@ private extension SignInWithAppleHelper {
         authorizationController.delegate = self
         authorizationController.presentationContextProvider = viewController
 
-        Task { @MainActor in
+        Task(priority: .userInitiated) { @MainActor in
             authorizationController.performRequests()
         }
     }
