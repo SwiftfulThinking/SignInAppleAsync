@@ -108,7 +108,7 @@ private extension SignInWithAppleHelper {
 
         let authorizationController = ASAuthorizationController(authorizationRequests: [request])
         authorizationController.delegate = self
-        authorizationController.presentationContextProvider = viewController
+        authorizationController.presentationContextProvider = self
 
         authorizationController.performRequests()
     }
@@ -165,10 +165,10 @@ extension SignInWithAppleHelper: ASAuthorizationControllerDelegate {
     }
 }
 
-extension UIViewController: @retroactive ASAuthorizationControllerPresentationContextProviding {
+extension SignInWithAppleHelper: ASAuthorizationControllerPresentationContextProviding {
     public func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
-        return self.view.window!
+        return UIApplication.shared.windows.first { $0.isKeyWindow }!
     }
- }
+}
 
 #endif
