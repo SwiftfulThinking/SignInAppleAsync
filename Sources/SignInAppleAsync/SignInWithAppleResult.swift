@@ -10,6 +10,7 @@ import AuthenticationServices
 public struct SignInWithAppleResult: Sendable {
     public let token: String
     public let nonce: String
+    public let authCode: String
     public let email: String?
     public let firstName: String?
     public let lastName: String?
@@ -33,14 +34,18 @@ public struct SignInWithAppleResult: Sendable {
     init?(authorization: ASAuthorization, nonce: String) {
         guard
             let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential,
-            let appleIDToken = appleIDCredential.identityToken
+            let appleIDToken = appleIDCredential.identityToken,
+            let authCodeData = appleIDCredential.authorizationCode,
+            let token = String(data: appleIDToken, encoding: .utf8),
+            let authCode = String(data: authCodeData, encoding: .utf8)
         else {
             return nil
         }
-        let token = String(decoding: appleIDToken, as: UTF8.self)
+
 
         self.token = token
         self.nonce = nonce
+        self.authCode = authCode
         self.email = appleIDCredential.email
         self.firstName = appleIDCredential.fullName?.givenName
         self.lastName = appleIDCredential.fullName?.familyName
